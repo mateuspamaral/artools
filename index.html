@@ -66,6 +66,10 @@
             transition: -webkit-text-stroke 0.5s ease;
         }
 
+        .hero-title {
+            will-change: transform, opacity, filter;
+        }
+
         .hero-title:hover .transparent-text-outline-bold {
             -webkit-text-stroke: 1.5px rgba(28, 25, 23, 1);
         }
@@ -210,6 +214,10 @@
             transform-style: preserve-3d;
             perspective: 1000px;
         }
+        
+        #hero-video {
+            will-change: transform;
+        }
 
         .video-halo {
             position: absolute;
@@ -343,7 +351,7 @@
     </main>
 
     <!-- Spacer to allow scroll scrubbing for a 14s video -->
-    <div class="h-[800vh] bg-base relative z-0">
+    <div class="h-[400vh] bg-base relative z-0">
         <div class="h-full w-[1px] bg-dominant/10 absolute left-1/2 -translate-x-1/2"></div>
         <div class="sticky top-1/2 -translate-y-1/2 text-center mix-blend-multiply opacity-20 pointer-events-none">
             <h2 class="font-display text-[15vw] font-bold tracking-tighter mix-blend-overlay text-dominant">PRECISION</h2>
@@ -358,22 +366,9 @@
         document.addEventListener("DOMContentLoaded", () => {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Init Lenis smooth scroll
-            const lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo easing
-                direction: 'vertical',
-                gestureDirection: 'vertical',
-                smooth: true,
-            });
+            // O Lenis foi totalmente removido daqui para garantir ZERO de atraso (input lag).
+            // O navegador agora vai usar as respostas puras e cruas do seu mouse de forma instantânea.
 
-            // Sync Lenis with ScrollTrigger
-            lenis.on('scroll', ScrollTrigger.update);
-
-            gsap.ticker.add((time) => {
-                lenis.raf(time * 1000);
-            });
-            gsap.ticker.lagSmoothing(0);
 
             // Initial Reveal Animations for Standard Elements
             gsap.to(".reveal", {
@@ -406,9 +401,9 @@
                     scrollTrigger: {
                         trigger: ".hero-pin",
                         start: "top top",
-                        end: "+=800vh", // Match spacer height
+                        end: "+=400vh", // Reduzido de 800vh para ficar menos "pesado" e exigir menos scroll
                         pin: true,
-                        scrub: true, // Lenis handles the smoothing, so strict sync is better here to avoid double-lag
+                        scrub: 0.15, // Um tempo curtíssimo do próprio GSAP (0.15s) só para o vídeo não engasgar, mas a resposta ao dedo é instantânea
                         onUpdate: (self) => {
                             // Update indicator line
                             if(indicator) {
